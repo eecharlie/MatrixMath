@@ -1,0 +1,30 @@
+#######################################
+# Syntax Coloring Map for MatrixMath
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+MatrixMath	KEYWORD1
+
+
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+print	KEYWORD2
+copy	KEYWORD2
+multiply	KEYWORD2
+add	KEYWORD2
+subtract	KEYWORD2
+transpose	KEYWORD2
+scale	KEYWORD2
+invert	KEYWORD2
+
+
+
+#######################################
+# Constants (LITERAL1)
+#######################################
