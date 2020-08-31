@@ -1,21 +1,26 @@
 /*
- *  MatrixMath.h Library for Matrix Math
- *
- *  Created by Charlie Matlack on 12/18/10.
- *  Modified from code by RobH45345 on Arduino Forums, algorithm from
- *  NUMERICAL RECIPES: The Art of Scientific Computing.
- *  Modified to work with Arduino 1.0/1.5 by randomvibe & robtillaart
- *  Made into a real library on GitHub by Vasilis Georgitzikis (tzikis)
- *  so that it's easy to use and install (March 2015)
- */
+ 
+ FILENAME:	MatrixMath.h
+ 
+ 
+ MatrixMath.h Library for Matrix Math
+ Created by Charlie Matlack on 12/18/10.
+ Modified from code by RobH45345 on Arduino Forums, algorithm from
+ NUMERICAL RECIPES: The Art of Scientific Computing.
+ Modified to work with Arduino 1.0/1.5 by randomvibe & robtillaart
+ Made into a real library on GitHub by Vasilis Georgitzikis (tzikis)
+ so that it's easy to use and install (March 2015)
 
-
-/*
- *  MatrixMath.cpp Library for Matrix Math
- *
- *  Created by Charlie Matlack on 12/18/10.
- *  Modified from code by RobH45345 on Arduino Forums, algorithm from
- *  NUMERICAL RECIPES: The Art of Scientific Computing.
+ 2020/08/31:1444 (UTC-5) -- Author: Orlando S. Hoilett
+ 			- moved to a templated class to make the class more usable across
+ 			different data types. This also allows the user to avoid floats and
+ 			doubles in order to save space and increase processing speed
+ 			- changed function names to have first letter be lower case instead
+ 			of upper cass
+ 			- added a print function without the "String label" parameter
+ 			- added a scale function that edits doesn't modify input array
+ 			- added const where sensible
+ 
  */
 
 
@@ -29,6 +34,8 @@
 #endif
 
 
+//Ensures print function will work across different architectures. Some Arduino
+//variants use SerialUSB, not Serial, for printing to the Serial Monitor/Plotter.
 #if defined(ARDUINO_ARCH_SAMD)
 	#define MatrixMathSerial SerialUSB
 #else
@@ -43,18 +50,18 @@ class MatrixMath
 	
 public:
 	//MatrixMath();
-	static void print(Type* A, int m, int n);
-	static void print(Type* A, int m, int n, String label);
+	static void print(const Type* A, int m, int n);
+	static void print(const Type* A, int m, int n, String label);
 	
-	static void copy(Type* A, int n, int m, Type* B);
+	static void copy(const Type* A, int n, int m, Type* B);
 	
-	static void multiply(Type* A, Type* B, int m, int p, int n, Type* C);
-	static void add(Type* A, Type* B, int m, int n, Type* C);
-	static void subtract(Type* A, Type* B, int m, int n, Type* C);
+	static void multiply(const Type* A, const Type* B, int m, int p, int n, Type* C);
+	static void add(const Type* A, const Type* B, int m, int n, Type* C);
+	static void subtract(const Type* A, const Type* B, int m, int n, Type* C);
 	
-	static void transpose(Type* A, int m, int n, Type* C);
+	static void transpose(const Type* A, int m, int n, Type* C);
 	static void scale(Type* A, int m, int n, Type k);
-	static void scale(Type* A, int m, int n, Type k, Type* C);
+	static void scale(const Type* A, int m, int n, Type k, Type* C);
 	
 	static int invert(float* A, int n);
 	
@@ -64,7 +71,7 @@ public:
 // Matrix Printing Routine
 // Uses tabs to separate numbers under assumption printed float width won't cause problems
 template<typename Type>
-void MatrixMath<Type>::print(Type* A, int m, int n)
+void MatrixMath<Type>::print(const Type* A, int m, int n)
 {
 	// A = input matrix (m x n)
 	int i, j;
@@ -83,7 +90,7 @@ void MatrixMath<Type>::print(Type* A, int m, int n)
 // Matrix Printing Routine
 // Uses tabs to separate numbers under assumption printed float width won't cause problems
 template<typename Type>
-void MatrixMath<Type>::print(Type* A, int m, int n, String label)
+void MatrixMath<Type>::print(const Type* A, int m, int n, String label)
 {
 	// A = input matrix (m x n)
 	int i, j;
@@ -101,7 +108,7 @@ void MatrixMath<Type>::print(Type* A, int m, int n, String label)
 }
 
 template<typename Type>
-void MatrixMath<Type>::copy(Type* A, int n, int m, Type* B)
+void MatrixMath<Type>::copy(const Type* A, int n, int m, Type* B)
 {
 	int i, j;
 	for (i = 0; i < m; i++)
@@ -114,7 +121,7 @@ void MatrixMath<Type>::copy(Type* A, int n, int m, Type* B)
 //Matrix Multiplication Routine
 // C = A*B
 template<typename Type>
-void MatrixMath<Type>::multiply(Type* A, Type* B, int m, int p, int n, Type* C)
+void MatrixMath<Type>::multiply(const Type* A, const Type* B, int m, int p, int n, Type* C)
 {
 	// A = input matrix (m x p)
 	// B = input matrix (p x n)
@@ -135,7 +142,7 @@ void MatrixMath<Type>::multiply(Type* A, Type* B, int m, int p, int n, Type* C)
 
 //Matrix Addition Routine
 template<typename Type>
-void MatrixMath<Type>::add(Type* A, Type* B, int m, int n, Type* C)
+void MatrixMath<Type>::add(const Type* A, const Type* B, int m, int n, Type* C)
 {
 	// A = input matrix (m x n)
 	// B = input matrix (m x n)
@@ -151,7 +158,7 @@ void MatrixMath<Type>::add(Type* A, Type* B, int m, int n, Type* C)
 
 //Matrix Subtraction Routine
 template<typename Type>
-void MatrixMath<Type>::subtract(Type* A, Type* B, int m, int n, Type* C)
+void MatrixMath<Type>::subtract(const Type* A, const Type* B, int m, int n, Type* C)
 {
 	// A = input matrix (m x n)
 	// B = input matrix (m x n)
@@ -167,7 +174,7 @@ void MatrixMath<Type>::subtract(Type* A, Type* B, int m, int n, Type* C)
 
 //Matrix Transpose Routine
 template<typename Type>
-void MatrixMath<Type>::transpose(Type* A, int m, int n, Type* C)
+void MatrixMath<Type>::transpose(const Type* A, int m, int n, Type* C)
 {
 	// A = input matrix (m x n)
 	// m = number of rows in A
@@ -189,7 +196,7 @@ void MatrixMath<Type>::scale(Type* A, int m, int n, Type k)
 
 
 template<typename Type>
-void MatrixMath<Type>::scale(Type* A, int m, int n, Type k, Type* C)
+void MatrixMath<Type>::scale(const Type* A, int m, int n, Type k, Type* C)
 {
 	for (int i = 0; i < m; i++)
 		for (int j = 0; j < n; j++)
